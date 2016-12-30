@@ -64,7 +64,7 @@
 			reg = <0x000>;
 			enable-method = "mt-boot";
 			cpu-release-addr = <0x0 0x40000200>;
-			clock-frequency = <1300000000>;
+			clock-frequency = <1495000000>;
 		};
 
 		cpu1: cpu@1 {
@@ -73,7 +73,7 @@
 			reg = <0x001>;
 			enable-method = "mt-boot";
 			cpu-release-addr = <0x0 0x40000200>;
-			clock-frequency = <1300000000>;
+			clock-frequency = <1495000000>;
 		};
 
 		cpu2: cpu@2 {
@@ -82,7 +82,7 @@
 			reg = <0x002>;
 			enable-method = "mt-boot";
 			cpu-release-addr = <0x0 0x40000200>;
-			clock-frequency = <1300000000>;
+			clock-frequency = <1495000000>;
 		};
 
 		cpu3: cpu@3 {
@@ -91,7 +91,7 @@
 			reg = <0x003>;
 			enable-method = "mt-boot";
 			cpu-release-addr = <0x0 0x40000200>;
-			clock-frequency = <1300000000>;
+			clock-frequency = <1495000000>;
 		};
 
 		cpu4: cpu@4 {
