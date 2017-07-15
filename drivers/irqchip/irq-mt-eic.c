@@ -1059,11 +1059,6 @@ static irqreturn_t mt_eint_demux(unsigned irq, struct irq_desc *desc)
     return IRQ_HANDLED;
 }
 
-static int mt_eint_max_channel(void)
-{
-    return EINT_MAX_CHANNEL;
-}
-
 /*
  * mt_eint_dis_debounce: To disable debounce.
  * @eint_num: the EINT number to disable
