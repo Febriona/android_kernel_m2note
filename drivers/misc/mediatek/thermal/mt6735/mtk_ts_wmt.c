@@ -865,11 +865,7 @@ int wmt_wifi_tx_thro_read(struct seq_file *m, void *v)
 
 static int wmt_wifi_tx_thro_open(struct inode *inode, struct file *file)
 {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
     return single_open(file, wmt_wifi_tx_thro_read, PDE_DATA(inode));
-#else
-    return single_open(file, wmt_wifi_tx_thro_read, PDE(inode)->data);
-#endif
 }
 
 /*New Wifi throttling Algo+*/
@@ -949,11 +945,7 @@ int wmt_wifi_algo_read(struct seq_file *m, void *v)
 
 static int wmt_wifi_algo_open(struct inode *inode, struct file *file)
 {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
     return single_open(file, wmt_wifi_algo_read, PDE_DATA(inode));
-#else
-    return single_open(file, wmt_wifi_algo_read, PDE(inode)->data);
-#endif
 }
 /*New Wifi throttling Algo-*/
 
@@ -993,11 +985,7 @@ int wmt_tm_wfd_read(struct seq_file *m, void *v)
 
 static int wmt_tm_wfd_open(struct inode *inode, struct file *file)
 {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
     return single_open(file, wmt_tm_wfd_read, PDE_DATA(inode));
-#else
-    return single_open(file, wmt_tm_wfd_read, PDE(inode)->data);
-#endif
 }
 
 ssize_t wmt_tm_pid_write(struct file *filp, const char __user *buf, size_t len, loff_t *data)
@@ -1038,11 +1026,7 @@ int wmt_tm_pid_read(struct seq_file *m, void *v)
 
 static int wmt_tm_pid_open(struct inode *inode, struct file *file)
 {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
     return single_open(file, wmt_tm_pid_read, PDE_DATA(inode));
-#else
-    return single_open(file, wmt_tm_pid_read, PDE(inode)->data);
-#endif
 }
 
 #define check_str(x) (x[0]=='\0'?"none\t":x)
@@ -1088,11 +1072,7 @@ static int wmt_tm_read(struct seq_file *m, void *v)
 
 static int wmt_tm_open(struct inode *inode, struct file *file)
 {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
     return single_open(file, wmt_tm_read, PDE_DATA(inode));
-#else
-    return single_open(file, wmt_tm_read, PDE(inode)->data);
-#endif
 }
 
 static ssize_t wmt_tm_write(struct file *filp, const char __user *buf, size_t count, loff_t *data)
@@ -1309,33 +1289,21 @@ static int wmt_tm_proc_register(void)
 		    proc_create("tzwmt", S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP, wmt_tm_proc_dir,
 				&_wmt_tm_fops);
         if (entry) {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
             proc_set_user(entry, 0, 1000);
-#else
-            entry->gid = 1000;
-#endif
         }
 
         entry =
 		    proc_create("clwmt_pid", S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP, wmt_tm_proc_dir,
 				&_tm_pid_fops);
         if (entry) {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
             proc_set_user(entry, 0, 1000);
-#else
-            entry->gid = 1000;
-#endif
         }
 
         entry =
 		    proc_create("clwmt_val", S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP, wmt_tm_proc_dir,
 				&_wmt_val_fops);
         if (entry) {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
             proc_set_user(entry, 0, 1000);
-#else
-            entry->gid = 1000;
-#endif
         }
 
         entry = proc_create("wifi_tx_thro", S_IRUGO | S_IWUSR, wmt_tm_proc_dir, &_tx_thro_fops);
@@ -1344,11 +1312,7 @@ static int wmt_tm_proc_register(void)
 		    proc_create("clwmt_wfdstat", S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP, wmt_tm_proc_dir,
 				&_wfd_stat_fops);
         if (entry) {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
             proc_set_user(entry, 0, 1000);
-#else
-            entry->gid = 1000;
-#endif
         }
     }
     return 0;

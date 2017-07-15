@@ -641,11 +641,7 @@ static int __init mtktsbattery_init(void)
     {
         entry = proc_create("tzbattery", S_IRUGO | S_IWUSR | S_IWGRP, mtktsbattery_dir, &mtkts_battery_fops);
         if (entry) {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
             proc_set_user(entry, 0, 1000);
-#else
-            entry->gid = 1000;
-#endif
         }
     }
 

@@ -685,33 +685,21 @@ static int __init mtk_mdm_txpwr_init(void)
 		    proc_create("mdm_mdinfo", S_IRUGO | S_IWUSR | S_IWGRP, mdtxpwr_dir,
 				&mtk_mdm_proc_mdinfo_fops);
         if (entry) {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
             proc_set_user(entry, 0, 1000);
-#else
-            entry->gid = 1000;
-#endif
         }
 
 		entry =
 		    proc_create("mdm_mdinfoex", S_IRUGO | S_IWUSR | S_IWGRP, mdtxpwr_dir,
 				&mtk_mdm_proc_mdinfoex_fops);
         if (entry) {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
             proc_set_user(entry, 0, 1000);
-#else
-            entry->gid = 1000;
-#endif
         }
 
 		entry =
 		    proc_create("mdm_mdinfoex_thre", S_IRUGO, mdtxpwr_dir,
 				&mtk_mdm_proc_mdinfoex_threshold_fops);
         if (entry) {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
             proc_set_user(entry, 0, 1000);
-#else
-            entry->gid = 1000;
-#endif
         }
 #endif
     }

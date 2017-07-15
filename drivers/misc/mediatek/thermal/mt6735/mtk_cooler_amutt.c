@@ -615,29 +615,17 @@ static int amutt_proc_register(void)
     } else {
         entry = proc_create("clamutt_param", S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP, amutt_proc_dir, &amutt_param_fops);
         if (entry) {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
             proc_set_user(entry, 0, 1000);
-#else
-            entry->gid = 1000;
-#endif
         }
 
         entry = proc_create("clamutt_asparam", S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP, amutt_proc_dir, &amutt_asparam_fops);
         if (entry) {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
             proc_set_user(entry, 0, 1000);
-#else
-            entry->gid = 1000;
-#endif
         }
 
         entry = proc_create("clamutt_dbg", S_IRUSR | S_IWUSR, amutt_proc_dir, &amutt_dbg_fops);
         if (entry) {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
             proc_set_user(entry, 0, 1000);
-#else
-            entry->gid = 1000;
-#endif
         }
     }
     return 0;

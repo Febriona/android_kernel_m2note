@@ -661,21 +661,13 @@ static int amddulthro_proc_register(void)
 #if CONFIG_SIGNAL_USER_SPACE
         entry = proc_create("tm_pid", S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP, amddulthro_proc_dir, &amddulthro_pid_fops);
         if (entry) {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
             proc_set_user(entry, 0, 1000);
-#else
-            entry->gid = 1000;
-#endif
         }
 #endif // CONFIG_SIGNAL_USER_SPACE
 
         entry = proc_create("amddulthro_param", S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP, amddulthro_proc_dir, &amddulthro_param_fops);
         if (entry) {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
             proc_set_user(entry, 0, 1000);
-#else
-            entry->gid = 1000;
-#endif
         }
 
         entry = proc_create("amddulthro_dbg", S_IRUSR | S_IWUSR, amddulthro_proc_dir, &amddulthro_dbg_fops);

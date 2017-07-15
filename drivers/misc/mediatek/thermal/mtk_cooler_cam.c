@@ -64,11 +64,7 @@ static int _cl_cam_read(struct seq_file *m, void *v)
 
 static int _cl_cam_open(struct inode *inode, struct file *file)
 {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
 	return single_open(file, _cl_cam_read, PDE_DATA(inode));
-#else
-	return single_open(file, _cl_cam_read, PDE(inode)->data);
-#endif
 }
 
 static const struct file_operations _cl_cam_fops = {

@@ -311,11 +311,7 @@ static int _cl_tm_nth_read(struct seq_file *m, void *v)
 
 static int _cl_tm_nth_open(struct inode *inode, struct file *file)
 {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
     return single_open(file, _cl_tm_nth_read, PDE_DATA(inode));
-#else
-    return single_open(file, _cl_tm_nth_read, PDE(inode)->data);
-#endif
 }
 
 static const struct file_operations _cl_tm_nth_fops = {
@@ -630,11 +626,7 @@ static int __init mtk_cooler_tm_nth_init(void)
     if (!entry) {
         mtk_cooler_tm_nth_dprintk_always("[%s] driver/tm_nth creation failed\n", __func__);
     } else {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0)
         proc_set_user(entry, 0, 1000);
-#else
-        entry->gid = 1000;
-#endif
     }
 
   }
