@@ -535,9 +535,6 @@ static int asc_rx_event_thread(void *data)
 
     rx->thread = current;
     snprintf(name, ASC_NAME_LEN, "asc_rx_%s", rx->cfg.name);
-#if (LINUX_VERSION_CODE <= KERNEL_VERSION(3, 4, 100))
-    daemonize(name);
-#endif
     ASCDPRT("%s thread start now.\n", name);
 
     while(1){        
@@ -1055,9 +1052,6 @@ static int asc_tx_event_thread(void *data)
 
     snprintf(name, ASC_NAME_LEN, "asc_tx_%s", tx->cfg.name);
     tx->thread = current;
-#if (LINUX_VERSION_CODE <= KERNEL_VERSION(3, 4, 100))
-    daemonize(name);
-#endif
     ASCDPRT("%s thread start now.\n", name);
 
     while(1){        

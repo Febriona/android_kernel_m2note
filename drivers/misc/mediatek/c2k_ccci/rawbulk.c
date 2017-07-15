@@ -1032,11 +1032,7 @@ static int rawbulk_tty_activate(struct tty_port *port, struct tty_struct
     /* Low latency for tty */
 
     port->low_latency = 1;
-#if (LINUX_VERSION_CODE > KERNEL_VERSION(3, 4, 100))
 	tty->termios.c_cc[VMIN] = 1;
-#else
-    tty->termios->c_cc[VMIN] = 1;
-#endif
     fn->tty_throttled = 0;
     return rawbulk_tty_start_io(fn);
 }
@@ -1411,11 +1407,7 @@ static __init struct rawbulk_function *rawbulk_alloc_function(int transfer_id) {
     fn->tty_throttled = 0;
     /* init function callbacks */
     fn->function.strings = fn->strings;
-#if (LINUX_VERSION_CODE > KERNEL_VERSION(3, 4, 100))
     fn->function.fs_descriptors = fn->fs_descs;
-#else
-	fn->function.descriptors = fn->fs_descs;
-#endif
     fn->function.hs_descriptors = fn->hs_descs;
 
     /* init device attributes */

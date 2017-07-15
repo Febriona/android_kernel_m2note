@@ -1007,29 +1007,17 @@ static void sdio_buf_in_tty_work(struct sdio_modem_port *port)
 	if(tty){
 		while(!list_empty(&port->sdio_buf_in_list)){
 			packet = list_first_entry(&port->sdio_buf_in_list, struct sdio_buf_in_packet, node);
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0))
 			room = tty_buffer_request_room(&port->port, packet->size);
-#else			
-			room = tty_buffer_request_room(tty, packet->size);
-#endif
 			if(room < packet->size){
 				LOGPRT(LOG_ERR,  "%s %d: no room in tty rx buffer!\n", __func__,__LINE__);
 			}
 			else{
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0))
 				room = tty_insert_flip_string(&port->port, packet->buffer, packet->size);
-#else			
-				room = tty_insert_flip_string(tty, packet->buffer, packet->size);
-#endif
 				if(room < packet->size){
 					LOGPRT(LOG_ERR,  "%s %d: couldn't insert all characters (TTY is full?)!\n", __func__,__LINE__);
 				}
-				else{
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0))					
+				else{					
 					tty_flip_buffer_push(&port->port);
-#else
-					tty_flip_buffer_push(tty);
-#endif
 				}
 			}
 
@@ -1075,11 +1063,7 @@ static int modem_tty_install(struct tty_driver *driver, struct tty_struct *tty)
 	
 	kref_get(&port->kref);
 	
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0))
 			ret = tty_port_install(&port->port,driver, tty);
-#else			
-			ret = tty_standard_install(driver, tty);
-#endif
 
 	if (ret == 0)
 		/* This is the ref sdio_uart_port get provided */
@@ -1287,11 +1271,7 @@ static void modem_tty_set_termios(struct tty_struct *tty,
 		LOGPRT(LOG_ERR,  "%s %d ret=%d\n", __func__,__LINE__,ret);
 		return ;
 	}
-#if (LINUX_VERSION_CODE > KERNEL_VERSION(3, 4, 100))
 	tty_termios_copy_hw(&tty->termios, old_termios);
-#else
-	tty_termios_copy_hw(tty->termios, old_termios);
-#endif
 }
 
 static int modem_tty_tiocmget(struct tty_struct *tty)
@@ -2840,11 +2820,7 @@ retry_get_buf_in_room:
 							mutex_unlock(&port->sdio_buf_in_mutex);
 						}
 retry_get_tty_room:
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0))
 						ret = tty_buffer_request_room(&port->port, modem->data_length - payload_offset);
-#else			
-						ret = tty_buffer_request_room(tty, modem->data_length - payload_offset);
-#endif
 						if(ret < (modem->data_length - payload_offset)){
 							if (modem->status == MD_EXCEPTION || modem->status == MD_EXCEPTION_ONGOING){
 								msleep(10);
@@ -2853,20 +2829,12 @@ retry_get_tty_room:
 								LOGPRT(LOG_ERR,  "%s %d: ttySDIO%d no room in tty rx buffer!(md status %d)\n", __func__,__LINE__, index, modem->status);
 						}
 						else{
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0))
 							ret = tty_insert_flip_string(&port->port, (modem->as_packet->buffer + payload_offset + sizeof(struct sdio_msg_head)), (modem->data_length - payload_offset));
-#else
-							ret = tty_insert_flip_string(tty, (modem->as_packet->buffer + payload_offset + sizeof(struct sdio_msg_head)), modem->data_length  - payload_offset);
-#endif
 							if(ret < (modem->data_length - payload_offset)){
 								LOGPRT(LOG_ERR,  "%s %d: ttySDIO%d couldn't insert all characters (TTY is full?)!\n", __func__,__LINE__, index);
 							}
-							else{
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0))					
-								tty_flip_buffer_push(&port->port);
-#else
-								tty_flip_buffer_push(tty);
-#endif						
+							else{					
+								tty_flip_buffer_push(&port->port);						
 							}
 						}
 					}
@@ -3151,28 +3119,16 @@ retry_get_skb:
 					mutex_lock(&port->sdio_buf_in_mutex);/*make sure data in list buffer had been pushed to tty buffer*/
 					mutex_unlock(&port->sdio_buf_in_mutex);
 				}
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0))
-				ret = tty_buffer_request_room(&port->port, modem->data_length);
-#else			
-				ret = tty_buffer_request_room(tty, modem->data_length);
-#endif				
+				ret = tty_buffer_request_room(&port->port, modem->data_length);				
 				if(ret < modem->data_length) {
 					LOGPRT(LOG_ERR,  "%s %d: ttySDIO%d no room in tty rx buffer!\n", __func__,__LINE__, index);
 				}else{
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0))
-				ret = tty_insert_flip_string(&port->port, (modem->msg->buffer + payload_offset), modem->data_length);
-#else			
-					ret = tty_insert_flip_string(tty, (modem->msg->buffer + payload_offset), modem->data_length);
-#endif	
+				ret = tty_insert_flip_string(&port->port, (modem->msg->buffer + payload_offset), modem->data_length);	
 					if(ret < modem->data_length){
 						LOGPRT(LOG_ERR,  "%s %d: ttySDIO%d couldn't insert all characters (TTY is full?)!\n", __func__,__LINE__, index);
 					}
-					else{
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0))					
-						tty_flip_buffer_push(&port->port);
-#else
-						tty_flip_buffer_push(tty);
-#endif						
+					else{					
+						tty_flip_buffer_push(&port->port);					
 					}
 				}
 			}
@@ -5267,14 +5223,9 @@ int  modem_sdio_init(struct cbp_platform_data *pdata)
 				goto err_sdio_modem_port_init;
 			}
 #else
-			struct device *dev;
-			#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0))					
+			struct device *dev;					
 			dev = tty_port_register_device(&port->port, modem_sdio_tty_driver,
 											port->index, NULL);
-			#else
-			dev = tty_register_device(modem_sdio_tty_driver,
-										port->index, NULL);
-			#endif
 			if (IS_ERR(dev)) {
 				ret = PTR_ERR(dev);
 				LOGPRT(LOG_ERR,  "%s %d tty register failed \n",__func__,__LINE__);

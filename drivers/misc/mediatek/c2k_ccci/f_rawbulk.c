@@ -198,15 +198,9 @@ int rawbulk_function_bind(struct usb_configuration *c, struct
     ep_in->driver_data = fn;
     fn->bulk_out = ep_out;
     fn->bulk_in = ep_in;
-#if (LINUX_VERSION_CODE > KERNEL_VERSION(3, 4, 100))
     f->fs_descriptors = usb_copy_descriptors(fn->fs_descs);
 	if (unlikely(!f->fs_descriptors))
 		return -ENOMEM;
-#else
-	f->descriptors = usb_copy_descriptors(fn->fs_descs);
-	if (unlikely(!f->descriptors))
-		return -ENOMEM;
-#endif
 
     if (gadget_is_dualspeed(gadget)) {
         fn->hs_bulkin_endpoint.bEndpointAddress =
