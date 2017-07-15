@@ -17,9 +17,6 @@
 #include <linux/slab.h>
 #include <linux/version.h>
 #include <linux/module.h>
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 36)
-#include <linux/mtd/nand.h>
-#endif
 #include <linux/vmalloc.h>
 
 /*****************************************************************************
@@ -32,16 +29,6 @@
 /*****************************************************************************
  * GLOBAL VARIABLE
  *****************************************************************************/
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 36))
-DECLARE_MUTEX(hacc_sem);
-DECLARE_MUTEX(mtd_sem);
-DECLARE_MUTEX(rid_sem);
-DECLARE_MUTEX(sec_mm_sem);
-DECLARE_MUTEX(osal_fp_sem);
-DECLARE_MUTEX(osal_verify_sem);
-DECLARE_MUTEX(osal_secro_sem);
-DECLARE_MUTEX(osal_secro_v5_sem);
-#else				/* (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,36)) */
 DEFINE_SEMAPHORE(hacc_sem);
 DEFINE_SEMAPHORE(mtd_sem);
 DEFINE_SEMAPHORE(rid_sem);
@@ -50,7 +37,6 @@ DEFINE_SEMAPHORE(osal_fp_sem);
 DEFINE_SEMAPHORE(osal_verify_sem);
 DEFINE_SEMAPHORE(osal_secro_sem);
 DEFINE_SEMAPHORE(osal_secro_v5_sem);
-#endif
 
 /*****************************************************************************
  * LOCAL VARIABLE

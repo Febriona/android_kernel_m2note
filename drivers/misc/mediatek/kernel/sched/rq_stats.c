@@ -61,10 +61,6 @@ struct cpu_load_data {
 
 static DEFINE_PER_CPU(struct cpu_load_data, cpuload);
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 10, 0))
-#define RQSTATS_USE_CPU_IDLE_INTERNAL 1
-#endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3, 10, 0)) */
-
 #if defined(RQSTATS_USE_CPU_IDLE_INTERNAL) || !defined(CONFIG_CPU_FREQ)
 static inline u64 get_cpu_idle_time_jiffy(unsigned int cpu, u64 *wall)
 {
