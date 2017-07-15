@@ -168,11 +168,8 @@ static int mtk_i2s0_awb_alsa_stop(struct snd_pcm_substream *substream)
     return 0;
 }
 
-static kal_int32 Previous_Hw_cur = 0;
 static snd_pcm_uframes_t mtk_i2s0_awb_pcm_pointer(struct snd_pcm_substream *substream)
 {
-    kal_int32 HW_memory_index = 0;
-    kal_int32 HW_Cur_ReadIdx = 0;
     kal_uint32 Frameidx =0;
     AFE_BLOCK_T *Awb_Block = &(I2S0_AWB_Control_context->rBlock);
     PRINTK_AUD_AWB("mtk_i2s0_awb_pcm_pointer Awb_Block->u4WriteIdx;= 0x%x \n",Awb_Block->u4WriteIdx);
