@@ -32,9 +32,6 @@
 static void st_lsm6ds3_push_data_with_timestamp(struct lsm6ds3_data *cdata,
 					u8 index, u8 *data, int64_t timestamp)
 {
-	int i, n = 0;
-	struct iio_chan_spec const *chs = cdata->indio_dev[index]->channels;
-	uint16_t bfch, bfchs_out = 0, bfchs_in = 0;
 	struct lsm6ds3_sensor_data *sdata = iio_priv(cdata->indio_dev[index]);
 	int err;
 	int16_t raw_data[3];
