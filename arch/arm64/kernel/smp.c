@@ -89,7 +89,6 @@ extern void pmic_full_reset(void);
 int __cpu_up(unsigned int cpu, struct task_struct *idle)
 {
 	int ret,res;
-	int i;
     struct wd_api * wd_api = NULL;
 	/*
 	 * We need to tell the secondary core where to find its stack and the
