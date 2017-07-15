@@ -1953,7 +1953,6 @@ ssize_t st_lsm6ds3_sysfs_flush_fifo(struct device *dev,
 static ssize_t st_lsm6ds3_sysfs_get_sensor_phone_calling(struct device *dev,
 				struct device_attribute *attr, char *buf)
 {
-	u8 index;
 	struct lsm6ds3_sensor_data *sdata = iio_priv(dev_get_drvdata(dev));
 
 	return sprintf(buf, "%d\n", sdata->sensor_phone_calling);
@@ -2211,7 +2210,6 @@ static int mz_sensors_lsm6ds3_acc_calibrate(struct device *dev)
 
 static int mz_sensors_lsm6ds3_get_calibbias(struct device *dev, int32_t calibbias[3])
 {
-	int err;
 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
 	struct lsm6ds3_sensor_data *sdata = iio_priv(indio_dev);
 
@@ -2225,7 +2223,6 @@ static int mz_sensors_lsm6ds3_get_calibbias(struct device *dev, int32_t calibbia
 
 static int mz_sensors_lsm6ds3_get_offset(struct device *dev, int32_t offset[3])
 {
-	int err;
 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
 	struct lsm6ds3_sensor_data *sdata = iio_priv(indio_dev);
 
@@ -2239,7 +2236,6 @@ static int mz_sensors_lsm6ds3_get_offset(struct device *dev, int32_t offset[3])
 
 static int mz_sensors_lsm6ds3_set_offset(struct device *dev, int32_t offset, int axis)
 {
-	int err;
 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
 	struct lsm6ds3_sensor_data *sdata = iio_priv(indio_dev);
 
