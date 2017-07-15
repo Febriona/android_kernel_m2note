@@ -1921,7 +1921,7 @@ bool EnableSideToneFilter(bool stf_on)
         uint32_t   read_reg_value = Afe_Get_Reg(AFE_SIDETONE_CON0);
         size_t coef_addr = 0;
 
-        printk("%s(), AFE_SIDETONE_GAIN[0x%lx] = 0x%x\n", __func__, AFE_SIDETONE_GAIN, 0);
+        printk("%s(), AFE_SIDETONE_GAIN[0x%lx] = 0x%x\n", __FUNCTION__, AFE_SIDETONE_GAIN, 0);
         // set side tone gain
         Afe_Set_Reg(AFE_SIDETONE_GAIN, 0, MASK_ALL);
         Afe_Set_Reg(AFE_SIDETONE_CON1, write_reg_value, MASK_ALL);
