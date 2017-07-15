@@ -421,10 +421,8 @@ static int wmt_conf_patch_get(unsigned char *pPatchName, struct firmware **ppPat
 	uid_t orig_uid;
 	gid_t orig_gid;
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 29))
 	/* struct cred *cred = get_task_cred(current); */
 	struct cred *cred = (struct cred *)get_current_cred();
-#endif
 
 	mm_segment_t orig_fs = get_fs();
 
@@ -448,15 +446,9 @@ static int wmt_conf_patch_get(unsigned char *pPatchName, struct firmware **ppPat
 		WMT_CCCI_ERR_FUNC("kzalloc(%d) fail\n", sizeof(struct firmware));
 		return -2;
 	}
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 29))
 	orig_uid = cred->fsuid;
 	orig_gid = cred->fsgid;
 	cred->fsuid = cred->fsgid = 0;
-#else
-	orig_uid = current->fsuid;
-	orig_gid = current->fsgid;
-	current->fsuid = current->fsgid = 0;
-#endif
 
 	set_fs(get_ds());
 
@@ -464,13 +456,8 @@ static int wmt_conf_patch_get(unsigned char *pPatchName, struct firmware **ppPat
 	iRet = wmt_conf_read_file_from_fs(pPatchName, &pfw->data, 0, padSzBuf);
 	set_fs(orig_fs);
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 29))
 	cred->fsuid = orig_uid;
 	cred->fsgid = orig_gid;
-#else
-	current->fsuid = orig_uid;
-	current->fsgid = orig_gid;
-#endif
 
 	if (iRet > 0) {
 		pfw->size = iRet;
