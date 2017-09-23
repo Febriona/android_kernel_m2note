@@ -52,9 +52,7 @@
 /****** End of Customization ******/
 
 #ifndef FORCE_KERNEL2X_STYLE
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0))
 #define MTK_ANDROID_4
-#endif
 #endif
 
 
