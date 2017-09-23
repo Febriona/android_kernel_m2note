@@ -25,15 +25,7 @@
 #include <linux/xlog.h>
 #include <linux/version.h>
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,37))
 #include <linux/mutex.h>
-#else
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27)
-#include <linux/semaphore.h>
-#else
-#include <asm/semaphore.h>
-#endif
-#endif
 
 #include <linux/i2c.h>
 #include <linux/leds.h>
@@ -90,11 +82,7 @@ static BOOL g_strobe_On = 0;
 static int g_duty=-1;
 static int g_timeOutTimeMs=0;
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,37))
 static DEFINE_MUTEX(g_strobeSem);
-#else
-static DECLARE_MUTEX(g_strobeSem);
-#endif
 
 
 #define STROBE_DEVICE_ID 0xC6
@@ -677,11 +665,7 @@ static int gDuty=0;
 static int g_timeOutTimeMs=0;
 static bool torch_flag = false;
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,37))
 static DEFINE_MUTEX(g_strobeSem);
-#else
-static DECLARE_MUTEX(g_strobeSem);
-#endif
 
 
 static struct work_struct workTimeOut;
