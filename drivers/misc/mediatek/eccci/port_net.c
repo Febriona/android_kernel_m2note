@@ -518,15 +518,11 @@ static int port_net_recv_skb(struct ccci_port *port, struct sk_buff * skb)
 	if(likely(port->modem->capability & MODEM_CAP_NAPI)) {
 		netif_receive_skb(skb);
 	} else {
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
 		if(!in_interrupt()){
 			netif_rx_ni(skb);
 		}else{
 			netif_rx(skb);
 		}
-#else
-		netif_rx(skb);
-#endif
 	}
 	dev->stats.rx_packets++;
 	dev->stats.rx_bytes += skb_len;
