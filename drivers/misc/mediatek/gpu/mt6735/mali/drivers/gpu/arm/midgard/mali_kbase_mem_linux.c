@@ -29,9 +29,7 @@
 #include <linux/fs.h>
 #include <linux/version.h>
 #include <linux/dma-mapping.h>
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
-	#include <linux/dma-attrs.h>
-#endif
+#include <linux/dma-attrs.h>
 #ifdef CONFIG_DMA_SHARED_BUFFER
 #include <linux/dma-buf.h>
 #endif				/* defined(CONFIG_DMA_SHARED_BUFFER) */
@@ -1065,11 +1063,7 @@ static int kbase_cpu_mmap(struct kbase_va_region *reg, struct vm_area_struct *vm
 	 * See MIDBASE-1057
 	 */
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
 	vma->vm_flags |= VM_DONTCOPY | VM_DONTDUMP | VM_DONTEXPAND | VM_IO;
-#else
-	vma->vm_flags |= VM_DONTCOPY | VM_DONTEXPAND | VM_RESERVED | VM_IO;
-#endif
 	vma->vm_ops = &kbase_vm_ops;
 	vma->vm_private_data = map;
 
@@ -1699,11 +1693,7 @@ static int kbase_tracking_page_setup(struct kbase_context *kctx, struct vm_area_
 
 	/* no real access */
 	vma->vm_flags &= ~(VM_READ | VM_MAYREAD | VM_WRITE | VM_MAYWRITE | VM_EXEC | VM_MAYEXEC);
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
 	vma->vm_flags |= VM_DONTCOPY | VM_DONTEXPAND | VM_DONTDUMP | VM_IO;
-#else
-	vma->vm_flags |= VM_DONTCOPY | VM_DONTEXPAND | VM_RESERVED | VM_IO;
-#endif
 	vma->vm_ops = &kbase_vm_special_ops;
 	vma->vm_private_data = kctx;
 
@@ -1717,9 +1707,6 @@ void *kbase_va_alloc(struct kbase_context *kctx, u32 size, struct kbase_hwc_dma_
 	dma_addr_t  dma_pa;
 	struct kbase_va_region *reg;
 	phys_addr_t *page_array;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
-	//DEFINE_DMA_ATTRS(attrs);
-#endif
 
 	u32 pages = ((size - 1) >> PAGE_SHIFT) + 1;
 	u32 flags = BASE_MEM_PROT_CPU_RD | BASE_MEM_PROT_CPU_WR |
@@ -1732,13 +1719,9 @@ void *kbase_va_alloc(struct kbase_context *kctx, u32 size, struct kbase_hwc_dma_
 	if (size == 0)
 		goto err;
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
 	//dma_set_attr(DMA_ATTR_WRITE_COMBINE, &attrs);
 	//va = dma_alloc_attrs(kctx->kbdev->dev, size, &dma_pa, GFP_KERNEL, &attrs);
 	va = dma_alloc_coherent(kctx->kbdev->dev, size, &dma_pa, GFP_KERNEL);
-#else
-	va = dma_alloc_writecombine(kctx->kbdev->dev, size, &dma_pa, GFP_KERNEL);
-#endif
 	if (!va)
 		goto err;
 
@@ -1779,12 +1762,8 @@ no_mmap:
 no_alloc:
 	kfree(reg);
 no_reg:
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
 	//dma_free_attrs(kctx->kbdev->dev, size, va, dma_pa, &attrs);
 	dma_free_coherent(kctx->kbdev->dev, size, va, dma_pa);
-#else
-	dma_free_writecombine(kctx->kbdev->dev, size, va, dma_pa);
-#endif
 err:
 	return NULL;
 }
@@ -1794,10 +1773,6 @@ void kbase_va_free(struct kbase_context *kctx, struct kbase_hwc_dma_mapping *han
 {
 	struct kbase_va_region *reg;
 	mali_error err;
-
-//#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
-//	DEFINE_DMA_ATTRS(attrs);
-//#endif
 
 	KBASE_DEBUG_ASSERT(kctx != NULL);
 	KBASE_DEBUG_ASSERT(handle->cpu_va != NULL);
@@ -1812,16 +1787,11 @@ void kbase_va_free(struct kbase_context *kctx, struct kbase_hwc_dma_mapping *han
 	kbase_mem_phy_alloc_put(reg->alloc);
 	kfree(reg);
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
 	//dma_set_attr(DMA_ATTR_WRITE_COMBINE, &attrs);
 	//dma_free_attrs(kctx->kbdev->dev, handle->size,
 	//		handle->cpu_va, handle->dma_pa, &attrs);
 	dma_free_coherent(kctx->kbdev->dev, handle->size,
 			handle->cpu_va, handle->dma_pa);
-#else
-	dma_free_writecombine(kctx->kbdev->dev, handle->size,
-				handle->cpu_va, handle->dma_pa);
-#endif
 }
 KBASE_EXPORT_SYMBOL(kbase_va_free);
 

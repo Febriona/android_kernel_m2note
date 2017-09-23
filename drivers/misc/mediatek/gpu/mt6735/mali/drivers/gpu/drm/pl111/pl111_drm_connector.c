@@ -106,9 +106,7 @@ int pl111_connector_helper_get_modes(struct drm_connector *connector)
 						pl111_drm_modes[i].w,
 						pl111_drm_modes[i].h,
 						60
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
 						, false
-#endif
 						);
 
 		if (mode != NULL) {

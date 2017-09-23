@@ -249,13 +249,8 @@ static int pl111_drm_unload(struct drm_device *dev)
 
 static struct vm_operations_struct pl111_gem_vm_ops = {
 	.fault = pl111_gem_fault,
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
 	.open = drm_gem_vm_open,
 	.close = drm_gem_vm_close,
-#else
-	.open = pl111_gem_vm_open,
-	.close = pl111_gem_vm_close,
-#endif
 };
 
 static const struct file_operations drm_fops = {

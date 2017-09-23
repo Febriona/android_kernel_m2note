@@ -183,11 +183,7 @@ int umpp_linux_mmap(struct file * filp, struct vm_area_struct * vma)
 		umpp_allocation * alloc;
 		uint64_t last_byte;
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0))
 		vma->vm_flags |= VM_DONTCOPY | VM_DONTEXPAND | VM_IO | VM_MIXEDMAP | VM_DONTDUMP;
-#else
-		vma->vm_flags |= VM_DONTCOPY | VM_DONTEXPAND | VM_RESERVED | VM_IO | VM_MIXEDMAP;
-#endif
 		vma->vm_ops = &umpp_vm_ops;
 		vma->vm_private_data = map;
 

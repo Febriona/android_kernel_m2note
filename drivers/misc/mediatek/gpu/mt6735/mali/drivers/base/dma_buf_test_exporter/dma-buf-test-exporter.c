@@ -24,10 +24,8 @@
 #include <linux/module.h>
 #include <linux/fs.h>
 #include <linux/atomic.h>
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
 #include <linux/dma-attrs.h>
 #include <linux/dma-mapping.h>
-#endif
 
 struct dma_buf_te_alloc {
 	/* the real alloc */
@@ -156,18 +154,12 @@ static void dma_buf_te_release(struct dma_buf *buf)
 	dev_info(te_device.this_device, "%s", __func__);
 
 	if (alloc->contiguous) {
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
 		DEFINE_DMA_ATTRS(attrs);
 
 		dma_set_attr(DMA_ATTR_WRITE_COMBINE, &attrs);
 		dma_free_attrs(te_device.this_device,
 						alloc->nr_pages * PAGE_SIZE,
 						alloc->contig_cpu_addr, alloc->contig_dma_addr, &attrs);
-#else
-		dma_free_writecombine(te_device.this_device,
-								alloc->nr_pages * PAGE_SIZE,
-								alloc->contig_cpu_addr, alloc->contig_dma_addr);
-#endif
 	} else {
 		for (i = 0; i < alloc->nr_pages; i++)
 			__free_page(alloc->pages[i]);
@@ -238,11 +230,7 @@ static int dma_buf_te_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
 	if (alloc->fail_mmap)
 		return -ENOMEM;
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
 	vma->vm_flags |= VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
-#else
-	vma->vm_flags |= VM_RESERVED | VM_IO | VM_DONTEXPAND;
-#endif
 	vma->vm_ops = &dma_buf_te_vm_ops;
 	vma->vm_private_data = dmabuf;
 
@@ -338,18 +326,12 @@ static int do_dma_buf_te_ioctl_alloc(struct dma_buf_te_ioctl_alloc __user *buf, 
 	if (contiguous) {
 		dma_addr_t dma_aux;
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
 		DEFINE_DMA_ATTRS(attrs);
 
 		dma_set_attr(DMA_ATTR_WRITE_COMBINE, &attrs);
 		alloc->contig_cpu_addr = dma_alloc_attrs(te_device.this_device,
 												alloc->nr_pages * PAGE_SIZE,
 												&alloc->contig_dma_addr, GFP_KERNEL, &attrs);
-#else
-		alloc->contig_cpu_addr = dma_alloc_writecombine(te_device.this_device,
-														alloc->nr_pages * PAGE_SIZE,
-														&alloc->contig_dma_addr, GFP_KERNEL);
-#endif
 		if (!alloc->contig_cpu_addr) {
 			dev_err(te_device.this_device, "%s: couldn't alloc contiguous buffer %d pages", __func__, alloc->nr_pages);
 			goto free_page_struct;
@@ -393,18 +375,12 @@ no_export:
 	/* i still valid */
 no_page:
 	if (contiguous) {
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
 		DEFINE_DMA_ATTRS(attrs);
 
 		dma_set_attr(DMA_ATTR_WRITE_COMBINE, &attrs);
 		dma_free_attrs(te_device.this_device,
 						alloc->nr_pages * PAGE_SIZE,
 						alloc->contig_cpu_addr, alloc->contig_dma_addr, &attrs);
-#else
-		dma_free_writecombine(te_device.this_device,
-								alloc->nr_pages * PAGE_SIZE,
-								alloc->contig_cpu_addr, alloc->contig_dma_addr);
-#endif
 	} else {
 		while (i-- > 0)
 			__free_page(alloc->pages[i]);

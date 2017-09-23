@@ -110,29 +110,6 @@ static void obtain_kds_if_currently_displayed(struct drm_device *dev,
 }
 #endif
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 11, 0))
-
-static int pl111_dma_buf_mmap(struct dma_buf *buffer,
-			struct vm_area_struct *vma)
-{
-	struct drm_gem_object *obj = buffer->priv;
-	struct pl111_gem_bo *bo = PL111_BO_FROM_GEM(obj);
-	struct drm_device *dev = obj->dev;
-	int ret;
-
-	DRM_DEBUG_KMS("DRM %s on dma_buf=%p\n", __func__, buffer);
-
-	mutex_lock(&dev->struct_mutex);
-	ret = drm_gem_mmap_obj(obj, obj->size, vma);
-	mutex_unlock(&dev->struct_mutex);
-	if (ret)
-		return ret;
-
-	return pl111_bo_mmap(obj, bo, vma, buffer->size);
-}
-
-#else
-
 static int pl111_dma_buf_mmap(struct dma_buf *buffer,
 			struct vm_area_struct *vma)
 {
@@ -150,12 +127,7 @@ static int pl111_dma_buf_mmap(struct dma_buf *buffer,
 
 	BUG_ON(!dev->driver->gem_vm_ops);
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
 	vma->vm_flags |= VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP;
-#else
-	vma->vm_flags |= VM_RESERVED | VM_IO | VM_PFNMAP | VM_DONTEXPAND;
-#endif
-
 	vma->vm_ops = dev->driver->gem_vm_ops;
 	vma->vm_private_data = obj;
 
@@ -167,18 +139,12 @@ static int pl111_dma_buf_mmap(struct dma_buf *buffer,
 	*/
 	drm_gem_object_reference(obj);
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 10, 0))
-	pl111_drm_vm_open_locked(dev, vma);
-#else
 	drm_vm_open_locked(dev, vma);
-#endif
 
 	mutex_unlock(&dev->struct_mutex);
 
 	return pl111_bo_mmap(obj, bo, vma, buffer->size);
 }
-
-#endif /* KERNEL_VERSION */
 
 static void pl111_dma_buf_release(struct dma_buf *buf)
 {
@@ -498,10 +464,8 @@ struct drm_gem_object *pl111_gem_prime_import(struct drm_device *dev,
 	if (IS_ERR(attachment))
 		return ERR_CAST(attachment);
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0))
 	/* from 3.10.0 we assume the caller has not taken a ref so we take one here */
 	get_dma_buf(dma_buf);
-#endif
 
 	sgt = dma_buf_map_attachment(attachment, DMA_BIDIRECTIONAL);
 	if (IS_ERR_OR_NULL(sgt)) {
@@ -556,10 +520,8 @@ err_unmap_attach:
 	dma_buf_unmap_attachment(attachment, sgt, DMA_BIDIRECTIONAL);
 err_buf_detach:
 	dma_buf_detach(dma_buf, attachment);
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0))
 	/* from 3.10.0 we will have taken a ref so drop it here */
 	dma_buf_put(dma_buf);
-#endif
 	return ERR_PTR(ret);
 }
 

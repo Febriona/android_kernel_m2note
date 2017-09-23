@@ -92,37 +92,12 @@ void pl111_common_irq(struct pl111_drm_crtc *pl111_crtc)
 	drm_handle_vblank(dev, pl111_crtc->crtc_index);
 
 	/* Wake up any processes waiting for page flip event */
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 8, 0))
 	if (old_flip_res->event) {
 		spin_lock_bh(&dev->event_lock);
 		drm_send_vblank_event(dev, pl111_crtc->crtc_index,
 					old_flip_res->event);
 		spin_unlock_bh(&dev->event_lock);
 	}
-#else
-	if (old_flip_res->event) {
-		struct drm_pending_vblank_event *e = old_flip_res->event;
-		struct timeval now;
-		unsigned int seq;
-
-		DRM_DEBUG_KMS("%s: wake up page flip event (%p)\n", __func__,
-				old_flip_res->event);
-
-		spin_lock_bh(&dev->event_lock);
-		seq = drm_vblank_count_and_time(dev, pl111_crtc->crtc_index,
-							&now);
-		e->pipe = pl111_crtc->crtc_index;
-		e->event.sequence = seq;
-		e->event.tv_sec = now.tv_sec;
-		e->event.tv_usec = now.tv_usec;
-
-		list_add_tail(&e->base.link,
-			&e->base.file_priv->event_list);
-
-		wake_up_interruptible(&e->base.file_priv->event_wait);
-		spin_unlock_bh(&dev->event_lock);
-	}
-#endif
 
 	drm_vblank_put(dev, pl111_crtc->crtc_index);
 
@@ -325,11 +300,7 @@ void pl111_crtc_helper_commit(struct drm_crtc *crtc)
 }
 
 bool pl111_crtc_helper_mode_fixup(struct drm_crtc *crtc,
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 6, 0))
 				const struct drm_display_mode *mode,
-#else
-				struct drm_display_mode *mode,
-#endif
 				struct drm_display_mode *adjusted_mode)
 {
 	DRM_DEBUG_KMS("DRM %s on crtc=%p\n", __func__, crtc);
