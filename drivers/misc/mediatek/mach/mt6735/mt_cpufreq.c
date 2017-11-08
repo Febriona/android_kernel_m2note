@@ -863,13 +863,7 @@ static unsigned int _mt_cpufreq_get_cpu_level(void)
 
 #ifdef CONFIG_ARCH_MT6753
 	{
-		unsigned int efuse_spare2 = _GET_BITS_VAL_(21 : 20, get_devinfo_with_index(5));
-
-		cpufreq_info("@%s: efuse_spare2 = 0x%x\n", __func__, efuse_spare2);
-
-		/* 6753T check, spare2[21:20] should be 0x3 */
-		if (cpu_spd_bond == 0 && efuse_spare2 == 3)
-			return CPU_LEVEL_0;
+		return CPU_LEVEL_0;
 	}
 #endif
 
