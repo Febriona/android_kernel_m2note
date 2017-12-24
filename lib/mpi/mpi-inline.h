@@ -30,7 +30,15 @@
 #define G10_MPI_INLINE_H
 
 #ifndef G10_MPI_INLINE_DECL
+<<<<<<< HEAD
 #define G10_MPI_INLINE_DECL  extern inline
+=======
+#if defined __GNUC_STDC_INLINE__ || defined __GNUC_GNU_INLINE__
+#define G10_MPI_INLINE_DECL extern inline __attribute__ ((__gnu_inline__))
+#else
+#define G10_MPI_INLINE_DECL extern inline
+#endif
+>>>>>>> fc9b024... lib: mpi: mpi-inline: Fix stupid cruft
 #endif
 
 G10_MPI_INLINE_DECL mpi_limb_t
