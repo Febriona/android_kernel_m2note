@@ -602,6 +602,9 @@ KBUILD_CFLAGS   += $(call cc-option,-fno-store-merging,)
 # Disable unused-variable warnings
 KBUILD_CFLAGS	+= $(call cc-disable-warning,unused-variable,)
 
+# Disable unused-function warnings
+KBUILD_CFLAGS	+= $(call cc-disable-warning,unused-function,)
+
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os
 else
