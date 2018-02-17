@@ -1233,7 +1233,7 @@ else # KBUILD_EXTMOD
 # read-only, and no consistency checks are made and the make
 # system is not used on the basis kernel. If updates are required
 # in the basis kernel ordinary make commands (without M=...) must
-# be used.
+# be used
 #
 # The following are the only valid targets when building external
 # modules.
