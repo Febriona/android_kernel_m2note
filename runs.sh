@@ -131,7 +131,7 @@ ro.blood.build_host=$KBUILD_BUILD_HOST
     rm -rf $(find . -name placeholder)
   fi
   zip -q -r -D -X $UNSIGNEDZIP ./*
-  mv -t $UNSIGNEDZIP $OUTDIR
+  mv -t $OUTDIR $UNSIGNEDZIP
 }
 
 function step5 {
