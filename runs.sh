@@ -30,6 +30,7 @@ function step1_setup {
   export OUTDIR=$KERNELDIR/out
   export SOURCESDIR=$BUILDDIR/obj
   export ZIPDIR=$BUILDDIR/zip
+  export CCHACHE=1
   # Kernel
   export ARCH=arm64
   export SUBARCH=arm64
@@ -39,16 +40,12 @@ function step1_setup {
   export BRANCH=$(git symbolic-ref --short HEAD)
   export VERSION=1.2
   export LOCALVERSION=$VERSION-Redsun
-  export CROSS_COMPILE=/root/gcc-linaro-6.4.1/bin/aarch64-linux-gnu-
+  export CROSS_COMPILE=/root/ubergcc-aarch64-android-5.3/bin/aarch64-linux-android-
   STRIP=${CROSS_COMPILE}strip
   # Zip
   export ZIPTOOLS=$KERNELDIR/tools/zip
   export UNSIGNEDZIP=$LOCALVERSION-$MODEL-$DATE.zip
-  export SIGNEDZIP=$LOCALVERSION-$MODEL-$DATE-signed.zip
-  # Changelog
-  export PREVIOUSTAG=$(git tag -l --sort=-taggerdate | grep -m 1 BLOOD)
-  export PREVIOUSHASH=$(git log --format=%H -1 $PREVIOUSTAG)
-  export CHANGELOG=$OUTDIR/$LOCALVERSION-$MODEL-$DATE-changelog.txt
+  export SIGNEDZIP=$MODEL-$LOCALVERSION-$DATE-signed.zip
 }
 
 function step2_preparation {
@@ -111,8 +108,6 @@ function step3_building {
     echo " "
     echo "Kernel succesfully built!"
     step4_zipit
-    step5
-    step6
   else
     echo " "
     echo "Building kernel failed!"
@@ -136,27 +131,10 @@ ro.blood.build_host=$KBUILD_BUILD_HOST
     rm -rf $(find . -name placeholder)
   fi
   zip -q -r -D -X $UNSIGNEDZIP ./*
-  if [ -f $UNSIGNEDZIP ]
-  then
-    echo " "
-    echo "Signing ZIP..."
-    java -Xms2g -Djava.library.path=$ZIPTOOLS/signapk-resources/ -jar $ZIPTOOLS/signapk.jar -w $ZIPTOOLS/testkey.x509.pem $ZIPTOOLS/testkey.pk8 $UNSIGNEDZIP $SIGNEDZIP
-    mv $SIGNEDZIP $OUTDIR/$SIGNEDZIP
-  else
-    echo " "
-    echo "Couldn't find unsigned ZIP!"
-  fi
+  mv -t $UNSIGNEDZIP $OUTDIR
 }
 
 function step5 {
-  echo " "
-  echo "Generating changelog from $PREVIOUSTAG tag..."
-  git log --format="%nTitle: %s%nAuthor: %aN <%aE>%nAuthored on: %aD%nAdded on: %cD%n" $PREVIOUSHASH..HEAD > $CHANGELOG
-  cd $KERNELDIR
-  end=$(date +"%s")
-}
-
-function step6 {
   echo " "
   echo "Total time elapsed: $(echo $(($end-$begin)) | awk '{print int($1/60)"minutes "int($1%60)"seconds "}')"
   echo "Image location: $SOURCESDIR/arch/$ARCH/boot/Image.gz-dtb"
